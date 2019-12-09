@@ -1,0 +1,1 @@
+testen van toevoegen van doc via csproj 

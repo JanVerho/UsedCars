@@ -1,0 +1,77 @@
+﻿@page
+@using Microsoft.AspNetCore.Html
+@using UsedCars.Model
+
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+
+    string cssClassForCar(Car car)
+    {
+        return (Model.IsCarSelected(car))  ? "" : "carNotSelected";
+    }
+
+    string displayIfNotEmpty(string valueString, string title)
+    {
+        if (string.IsNullOrEmpty(valueString)) return "";
+        return title + ": " + valueString;
+    }
+
+    void renderOptionForColor(string colorPar, string selectedColor)
+    {
+        string selectedString = (colorPar == selectedColor) ? "selected" : "";
+        @:<option value="@colorPar" @selectedString>@colorPar</option>
+    }
+}
+
+
+
+<div class="autoTitle">
+    onze auto's:
+</div>
+
+<div class="carList">
+    @{
+        foreach (Car car in Model.Cars)
+        {
+            <div class="carRow @cssClassForCar(car)">
+                <div class="carName">@car.Name @car.Color (@car.Year):</div>
+                <div class="carPrice">@car.Price EUR.</div>
+            </div>
+
+        }
+    }
+</div>
+
+<form method="post">
+    <div class="formouter">
+        <div class="formfield">
+            <label for="maximumPrice">maximumPrice:</label>
+            <input asp-for="MaximumPriceString" />
+        </div>
+        <div class="formfield">
+            <label for="color">color:</label>
+            <select asp-for="Color">
+                <option value=""></option>
+                @foreach (string c in Model.UniqueColorsForCars())
+                {
+                    renderOptionForColor(c, Model.Color);
+                }
+            </select>
+        </div>
+        <div class="formfield">
+            <label for="type">type:</label>
+            <input asp-for="Type" />
+        </div>
+        <div class="formfield">
+            <input type="submit" value="filter" />
+        </div>
+    </div>
+</form>
+
+<div class="filterSummary">
+    <div>@displayIfNotEmpty(Model.MaximumPriceString, "maximum price")</div>
+    <div>@displayIfNotEmpty(Model.Color, "selected color")</div>
+    <div>@displayIfNotEmpty(Model.Type, "selected type")</div>
+</div>
+
